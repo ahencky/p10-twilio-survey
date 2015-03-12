@@ -1,8 +1,7 @@
 .container {
   margin: auto;
-  width: 800px;
+  width: 100%;
   padding: 2%;
-
 }
 
 th {
@@ -46,4 +45,12 @@ a {
 
 a:visited {
     color: darkslategray;
+}
+
+.big_btn {
+  padding: 2%;
+  font-weight: bold;
+  font-size: 1.2em;
+  background-color: white;
+  margin: 2%;
 }

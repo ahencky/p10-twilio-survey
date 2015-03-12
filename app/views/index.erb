@@ -1,11 +1,14 @@
 <div class="container">
   <header class="title-header">
-    <h1>SMS Polling Results</h1>
+    <h1>SMS Polls</h1>
   </header>
   <ul class = "list">
     <% @questions.each do |question| %>
       <li class ="list-item"><a href="/questions/<%=question.id%>"><%= question.body %></a></li>
     <% end %>
+
+    <a href = "/questions/new"><button class = "big_btn">Create New Question</button></a>
   </ul>
+
 
 </div>

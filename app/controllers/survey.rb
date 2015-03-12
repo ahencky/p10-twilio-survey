@@ -24,8 +24,28 @@ get '/questions/:id' do
     erb :question
 end
 
+post '/questions/:id' do
+    @question = Question.find(params[:id])
+    @question.destroy()
+    redirect '/'
+end
+
 # GET request URL when user texts my twilio number. Sends a poll question back as a text message
 get '/take-survey' do
+    # session[:user_id] = User.find_or_create_by(number: params[:number])
+    # if(params[:message] == 'stop')
+    #     session[:surevy_started] = false
+    # elsif(session[:surevy_started])
+    #     # take their response
+    #     @question = session[:question_id]
+    #     @question.answer(params[:message])
+    #     # ask them a question
+    # elsif(params[:message] == 'start')
+    #     session[:surevy_started] = true
+    #     session[:question_id] = ????
+    #     # ask them a question
+    # end
+
     account_sid =ENV['ACCOUNT_SID']
     auth_token = ENV['AUTH_TOKEN']
     @twilio_num = ENV['TWILIO_PHONE']
@@ -50,12 +70,12 @@ end
 
 get '/test-response' do
     @new_question = Question.generate_random()
-    sender = params[:from]
+    sender = params[:From]
 
-    sender_msg = params[:body]
+    sender_msg = params[:Body]
 
     twiml = Twilio::TwiML::Response.new do |r|
-      r.Message "Hi #{sender} here is your question: #{@new_question.body}"
+      r.Message "Hi #{sender}, you sent me #{sender_msg, }here is your question: #{@new_question.body}"
     end
     twiml.text
 end
