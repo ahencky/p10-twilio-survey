@@ -1,10 +1,49 @@
 .container {
-  margin: 20px auto;
-  width: 600px;
-  padding: 0px 20px 20px 20px;
-  border: 1px dotted black;
+  margin: auto;
+  width: 800px;
+  padding: 2%;
+
 }
 
 th {
   text-align: left;
+}
+
+button {
+    color: black;
+}
+
+.new_form {
+    width: 50%;
+    margin: auto;
+}
+
+.wide_input {
+    width: 100%;
+    margin-bottom: 5%;
+}
+
+.list {
+    background-color: gainsboro;
+    padding: 4%;
+    border: 1px dotted black;
+}
+
+.list-item {
+    list-style-type: none;
+    font-size: 24px;
+    margin: 2%;
+}
+
+.title-header {
+    background-color: lightblue;
+    padding: 4%;
+}
+
+a {
+  color: black;
+}
+
+a:visited {
+    color: darkslategray;
 }

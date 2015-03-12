@@ -135,20 +135,19 @@ task :default  => :spec
 
 QUESTION_ARRAY = [
   {
-    :body => "How old are you?"
+    :body => "what city do you live in?"
   },
   {
     :body => "what is your favorite color?"
   }
 ]
 
-namespace :questions do
+namespace :import do
   desc "Import questions to db from static array"
-  task import: :environment do
+  task :questions do
     QUESTION_ARRAY.each do |q|
       @new_q = Question.create(body: q[:body])
     end
     puts 'Survey questions imported.'
   end
-
 end

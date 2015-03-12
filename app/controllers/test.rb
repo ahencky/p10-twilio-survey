@@ -1,7 +1,7 @@
-get '/' do
-    'Hello World! Currently running version ' + Twilio::VERSION + \
-        ' of the twilio-ruby library.'
-end
+# get '/' do
+#     'Hello World! Currently running version ' + Twilio::VERSION + \
+#         ' of the twilio-ruby library.'
+# end
 
 #  this uses the twilio-ruby helper library to generate TwiML, Twilio's Markup XML.
 #  When this is deployed on heroku, need to add the URL as a get route in my twilio account settings.
@@ -42,12 +42,24 @@ end
 
 # end
 
-get '/test' do
-    @client = Twilio::REST::Client.new ENV['ACCOUNT_SID'], ENV['AUTH_TOKEN']
-    @twilio_num = ENV['TWILIO_PHONE']
-    # This sends me a text message
-    message = @client.account.messages.create(:body => "Twilio is sending this text message through my app",
-        :to => "+15103382436",
-        :from => @twilio_num)
-    puts "text message sent to: " + message.to + "from: " + @twilio_num
-end
+# get '/test' do
+#     @client = Twilio::REST::Client.new ENV['ACCOUNT_SID'], ENV['AUTH_TOKEN']
+#     @twilio_num = ENV['TWILIO_PHONE']
+#     @new_question = Question.generate_random()
+#     # This sends me a text message with a random question
+#     message = @client.account.messages.create(:body => @new_question.body,
+#         :to => "+15103382436",
+#         :from => @twilio_num)
+#     puts "text message sent to: " + message.to + "from: " + @twilio_num + @new_question.body
+# end
+
+# get '/test-response' do
+#     @new_question = Question.generate_random()
+#     sender = params[:from]
+
+
+#     twiml = Twilio::TwiML::Response.new do |r|
+#       r.Message "Hi #{name} here is your question: #{@new_question.body}"
+#     end
+#     twiml.text
+# end
