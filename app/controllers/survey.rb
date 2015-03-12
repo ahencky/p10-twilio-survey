@@ -70,12 +70,12 @@ end
 
 get '/test-response' do
     @new_question = Question.generate_random()
-    sender = params[:From]
+    @sender = params[:From]
 
-    sender_msg = params[:Body]
+    @sender_msg = params[:Body]
 
     twiml = Twilio::TwiML::Response.new do |r|
-      r.Message "Hi #{sender}, you sent me #{sender_msg, }here is your question: #{@new_question.body}"
+      r.Message "Hi #{@sender}, you sent me #{@sender_msg}, here is your question: #{@new_question.body}"
     end
     twiml.text
 end
