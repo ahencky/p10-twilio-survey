@@ -69,13 +69,31 @@ get '/take-survey' do
 end
 
 get '/test-response' do
-    @new_question = Question.generate_random()
     @sender = params[:From]
 
-    @sender_msg = params[:Body]
+    @current_user = Participant.find_or_create_by_phone_number(phone_number: @sender)
+    session[:user_id] = @current_user.id
 
-    twiml = Twilio::TwiML::Response.new do |r|
-      r.Message "Hi #{@sender}, you sent me #{@sender_msg}, here is your question: #{@new_question.body}"
+    if session[:user_id][:question_id]
+        #get their response for the poll question
+        @sender_response = params[:Body]
+        @question_id = session[:user_id][:question_id]
+        response = ParticipantAnswer.create(answer: @sender_response, question_id: @question_id)
+        session.clear
+        twiml = Twilio::TwiML::Response.new do |r|
+          r.Message "Thanks for your response. Reply to this message to get another question"
+        end
+        twiml.text
+    else
+        #send a poll question
+        @new_question = Question.generate_random()
+        session[:user_id][:question_id] = @new_question.id
+        @current_user.questions << @new_question
+        twiml = Twilio::TwiML::Response.new do |r|
+          r.Message "Here is your poll question: #{@new_question.body}. Reply to this message to answer the question"
+        end
+        twiml.text
     end
-    twiml.text
+
+
 end
