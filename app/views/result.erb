@@ -2,10 +2,15 @@
     <h1>Poll Results</h1>
     <h2><%=@question.body %></h2>
     <div class ="results">
-        <p>show poll results here</p>
+        <ul>
+        <% @answers.each do |answer| %>
+            <li><%= answer.answer %></li>
+        <% end %>
+        </ul>
     </div>
 
     <form method = "POST" action = "/questions/<%=@question.id%>">
+        <input name="_method" type="hidden" value="delete" />
         <input type = "submit" value = "Delete Question" class = "big_btn">
     </form>
 </div>

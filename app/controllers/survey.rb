@@ -21,71 +21,39 @@ end
 # get polling results for a specific question
 get '/questions/:id' do
     @question = Question.find(params[:id])
-    erb :question
+    @answers = ParticipantAnswer.where(question_id: params[:id])
+    erb :result
 end
 
-post '/questions/:id' do
+delete '/questions/:id' do
     @question = Question.find(params[:id])
     @question.destroy()
     redirect '/'
 end
 
-# GET request URL when user texts my twilio number. Sends a poll question back as a text message
-get '/take-survey' do
-    # session[:user_id] = User.find_or_create_by(number: params[:number])
-    # if(params[:message] == 'stop')
-    #     session[:surevy_started] = false
-    # elsif(session[:surevy_started])
-    #     # take their response
-    #     @question = session[:question_id]
-    #     @question.answer(params[:message])
-    #     # ask them a question
-    # elsif(params[:message] == 'start')
-    #     session[:surevy_started] = true
-    #     session[:question_id] = ????
-    #     # ask them a question
-    # end
-
-    account_sid =ENV['ACCOUNT_SID']
-    auth_token = ENV['AUTH_TOKEN']
-    @twilio_num = ENV['TWILIO_PHONE']
-    @client = Twilio::REST::Client.new account_sid, auth_token
-
-    # Find the user by their phone number
-    @user_phone = params[:From]
-    @participant = Participant.where(phone_number: @user_phone).first || Participant.create(phone_number: @user_phone)
-
-    # Reply to the user with a question
-    # answered_questions_ids= @participant.questions.pluck(:question_id) # returns array of ids
-
-    @new_question = Question.generate_random() # for now just get a random question
-
-    # This sends a text message to the 'to' phone number from my twilio trial number
-    # With the help of twilio-ruby gem it is an HTTP POST to my account's Messages list resource URI
-    message = @client.account.messages.create(:body => @new_question.body,
-        :to => @user_phone,
-        :from => @twilio_num)
-    puts "text message sent to: " + message.to + @new_question.body
-end
-
-get '/test-response' do
+get '/poll-question' do
     @sender = params[:From]
 
     @current_user = Participant.find_or_create_by_phone_number(phone_number: @sender)
 
     if session[:user_id]
-        #get their response for the poll question
+        #get their response for the previous poll question
         @sender_response = params[:Body]
         @question_id = session[:question_id]
-        @answer = ParticipantAnswer.create(answer: @sender_response, question_id: @question_id)
+
+        @answer = ParticipantAnswer.create(answer: @sender_response, question_id: @question_id, participant_id: session[:user_id])
         session.clear
         twiml = Twilio::TwiML::Response.new do |r|
           r.Message "Thanks for your response. Reply to this message to get another question"
         end
         twiml.text
     else
-        #send a poll question
-        @new_question = Question.generate_random()
+        #send the requesting user a poll question
+        @all_questions = Question.pluck(:id)
+        @answered_questions = @current_user.participant_answers.pluck(:question_id)
+        @unanswered_questions = @all_questions - @answered_questions
+        @new_question = Question.generate_random(@unanswered_questions)
+
         session[:user_id] = @current_user.id
         session[:question_id] = @new_question.id
         @current_user.questions << @new_question
@@ -94,6 +62,11 @@ get '/test-response' do
         end
         twiml.text
     end
+end
 
-
+get '/error' do
+    twiml = Twilio::TwiML::Response.new do |r|
+      r.Message "An error has occurred"
+    end
+    twiml.text
 end
