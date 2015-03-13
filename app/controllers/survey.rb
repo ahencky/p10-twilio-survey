@@ -72,13 +72,12 @@ get '/test-response' do
     @sender = params[:From]
 
     @current_user = Participant.find_or_create_by_phone_number(phone_number: @sender)
-    session[:user_id] = @current_user.id
 
-    if session[:user_id][:question_id]
+    if session[:user_id]
         #get their response for the poll question
         @sender_response = params[:Body]
-        @question_id = session[:user_id][:question_id]
-        response = ParticipantAnswer.create(answer: @sender_response, question_id: @question_id)
+        @question_id = session[:question_id]
+        @answer = ParticipantAnswer.create(answer: @sender_response, question_id: @question_id)
         session.clear
         twiml = Twilio::TwiML::Response.new do |r|
           r.Message "Thanks for your response. Reply to this message to get another question"
@@ -87,7 +86,8 @@ get '/test-response' do
     else
         #send a poll question
         @new_question = Question.generate_random()
-        session[:user_id][:question_id] = @new_question.id
+        session[:user_id] = @current_user.id
+        session[:question_id] = @new_question.id
         @current_user.questions << @new_question
         twiml = Twilio::TwiML::Response.new do |r|
           r.Message "Here is your poll question: #{@new_question.body}. Reply to this message to answer the question"
