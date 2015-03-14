@@ -1,4 +1,4 @@
-$(window).on("load", function() {
+$(document).on("ready", function() {
     var id = $('h2').attr("id");
         var url = '/chart'
         request = $.ajax({
