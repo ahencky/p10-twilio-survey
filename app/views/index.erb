@@ -3,6 +3,7 @@
     <h1>SMS Polls</h1>
   </header>
   <ul class = "list">
+    <h3>Results</h3>
     <% @questions.each do |question| %>
       <li class ="list-item"><a href="/questions/<%=question.id%>"><%= question.body %></a></li>
     <% end %>

@@ -72,13 +72,18 @@ get '/poll-question' do
         @all_questions = Question.pluck(:id)
         @answered_questions = @current_user.participant_answers.pluck(:question_id)
         @unanswered_questions = @all_questions - @answered_questions
-        @new_question = Question.generate_random(@unanswered_questions)
+        if @unanswered_questions.empty?
+            @message = "you have answered all current poll questions"
+        else
+            @new_question = Question.generate_random(@unanswered_questions)
+            @message = @new_question.body
+        end
 
         session[:user_id] = @current_user.id
         session[:question_id] = @new_question.id
         @current_user.questions << @new_question
         twiml = Twilio::TwiML::Response.new do |r|
-          r.Message "Here is your poll question: #{@new_question.body}. Reply to this message to answer the question"
+          r.Message "Here is your poll question: #{@message}. Reply to this message to answer the question"
         end
         twiml.text
     end
