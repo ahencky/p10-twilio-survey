@@ -25,6 +25,26 @@ get '/questions/:id' do
     erb :result
 end
 
+post '/chart' do
+    id = params[:id]
+    @question = Question.find(id)
+    @answers_array = ParticipantAnswer.where(question_id: id).to_a
+
+    @answers = @answers_array.map{|user_answer| user_answer.answer.downcase.lstrip.rstrip unless user_answer.answer.nil?}
+    @frequencies = {}
+    @answers.map{ |answer| @frequencies[answer] = @answers.count(answer)}
+    @answers.delete(nil)
+    @min = @answers.min
+    @max = @answers.max
+
+    if request.xhr?
+       content_type :json
+      {question: @question.body, answers: @answers, frequencies: @frequencies, min: @min, max: @max}.to_json
+    else
+      redirect "/"
+    end
+end
+
 delete '/questions/:id' do
     @question = Question.find(params[:id])
     @question.destroy()

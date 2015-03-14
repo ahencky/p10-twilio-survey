@@ -1,7 +1,41 @@
-$(document).ready(function() {
-  // This is called after the document has loaded in its entirety
-  // This guarantees that any elements we bind to will exist on the page
-  // when we try to bind to them
-
-  // See: http://docs.jquery.com/Tutorials:Introducing_$(document).ready()
+$(window).on("load", function() {
+    var id = $('h2').attr("id");
+        var url = '/chart'
+        request = $.ajax({
+            url: url,
+            type: 'POST',
+            data: {id: id},
+            dataType: 'JSON',
+        }).done(renderChart);
 });
+
+function renderChart(response){
+    var frequencies = response.frequencies;
+    var answerData = [];
+    for (answer in frequencies){
+        answerData.push({
+            x: answer,
+            y: frequencies[answer],
+        });
+    }
+
+    var result_chart = new CanvasJS.Chart("chartContainer", {
+        title: {
+            text: response.question
+        },
+        type: "column",
+        axisX: {
+            title: "Answer",
+            minimum: response.min,
+            maximum: response.max
+        },
+        axisY: {
+            title: "Votes"
+        },
+        data: [{
+            dataPoints : answerData
+        }]
+    });
+    result_chart.render();
+}
+
