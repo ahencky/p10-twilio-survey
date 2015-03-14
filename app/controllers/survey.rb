@@ -26,7 +26,7 @@ get '/questions/:id' do
 end
 
 post '/chart' do
-    id = params[:id]
+    id = params[:id].to_i
     @question = Question.find(id)
     if @question.participant_answers
         @answers_array = ParticipantAnswer.where(question_id: id).to_a
