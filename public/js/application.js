@@ -26,8 +26,6 @@ function renderChart(response){
         type: "column",
         axisX: {
             title: "Answer",
-            minimum: response.min,
-            maximum: response.max
         },
         axisY: {
             title: "Votes"
